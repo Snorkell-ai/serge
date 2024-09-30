@@ -25,7 +25,6 @@ def get_user(db: Session, username: str) -> Optional[user_schema.User]:
         Optional[user_schema.User]: The user object mapped to the view model,
         or None if no user is found.
     """
-
     return Mappers.user_db_to_view(
         db.query(user_model.User).filter(user_model.User.username == username).first(),
         include_auth=True,
