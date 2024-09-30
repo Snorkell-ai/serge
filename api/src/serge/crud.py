@@ -58,7 +58,6 @@ def create_user(db: Session, ua: user_schema.UserAuth) -> Optional[user_schema.U
             exists
         or an unsupported authentication type is provided.
     """
-
     # Check already exists
     if get_user(db, ua.username):
         logging.error(f"Tried to create new user, but already exists: {ua.username}")
