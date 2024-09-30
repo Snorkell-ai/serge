@@ -63,6 +63,22 @@ if settings.NODE_ENV == "production":
 
     @app.middleware("http")
     async def add_custom_header(request, call_next):
+        """Add a custom header for specific HTTP responses.
+
+        This function processes an incoming HTTP request and checks the response
+        status code. If the status code is 404 (Not Found), it returns a custom
+        HTML file located at "static/200.html" instead of the default 404
+        response. For all other status codes, it returns the original response.
+
+        Args:
+            request: The incoming HTTP request object.
+            call_next: A callable that takes the request and returns the response.
+
+        Returns:
+            Response: The modified response object, either the original or the custom 200 HTML
+                file.
+        """
+
         response = await call_next(request)
         if response.status_code == 404:
             return FileResponse("static/200.html")
@@ -85,6 +101,15 @@ else:
 
 @start_app.on_event("startup")
 async def start_database():
+    """Start the database by cleaning up temporary weight files and seeding the
+    database.
+
+    This function first identifies and removes all temporary files with a
+    '.tmp' extension from the specified weights directory. After cleaning up
+    the temporary files, it establishes a database session and seeds the
+    database with initial data.
+    """
+
     WEIGHTS = "/usr/src/app/weights/"
     files = os.listdir(WEIGHTS)
     files = list(filter(lambda x: x.endswith(".tmp"), files))
